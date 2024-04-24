@@ -4,8 +4,8 @@ import Button from "./src/components/Button";
 import OpButton from "./src/components/OpButton";
 import {
   StyleSheet,
-  Text,
   View,
+  Text,
   Image,
   FlatList,
   useColorScheme,
@@ -87,7 +87,7 @@ export default function App() {
 
   const uploadImage = async () => {
     if (!image) {
-      <Text>No image captured.</Text>;
+      console.error("No image captured.");
       return;
     }
     if (camRef) {
@@ -97,7 +97,7 @@ export default function App() {
         try {
           const { status } = await Location.requestForegroundPermissionsAsync();
           if (status !== "granted") {
-            Alert.alert("Permission to access location was denied");
+            console.error("Permission to access location was denied");
             return;
           }
 
@@ -145,19 +145,19 @@ export default function App() {
   };
 
   const onChangeCamType = () => {
-    if (Camera.Constants.Type.front === camType) {
-      setCamType(Camera.Constants.Type.back);
-    } else {
-      setCamType(Camera.Constants.Type.front);
-    }
+    setCamType(
+      camType === Camera.Constants.Type.front
+        ? Camera.Constants.Type.back
+        : Camera.Constants.Type.front
+    );
   };
 
   const onChangeFlash = () => {
-    if (Camera.Constants.FlashMode.off === flash) {
-      setFlashState(Camera.Constants.FlashMode.on);
-    } else {
-      setFlashState(Camera.Constants.FlashMode.off);
-    }
+    setFlashState(
+      flash === Camera.Constants.FlashMode.off
+        ? Camera.Constants.FlashMode.on
+        : Camera.Constants.FlashMode.off
+    );
   };
 
   const viewGallery = () => {
@@ -167,7 +167,9 @@ export default function App() {
   const renderGalleryItem = ({ item }) => (
     <View style={styles.imageContainer}>
       <Image source={{ uri: item.url }} style={styles.galleryImage} />
-      <Text style={styles.metadataText} color={isDarkMode ? "#fff" : "#000"}>
+      <Text
+        style={[styles.metadataText, { color: isDarkMode ? "#fff" : "#000" }]}
+      >
         {`Location: ${item.name}, ${item.region}, ${item.country}`}
       </Text>
     </View>
@@ -192,7 +194,7 @@ export default function App() {
                 name=""
                 icon="flash"
                 onPress={onChangeFlash}
-                isActive={Camera.Constants.FlashMode.on === flash}
+                isActive={flash === Camera.Constants.FlashMode.on}
               />
               <OpButton name="" icon="swap" onPress={onChangeCamType} />
             </View>
@@ -234,7 +236,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    height: "100vh",
   },
   camera: {
     flex: 1,
@@ -265,7 +266,6 @@ const styles = StyleSheet.create({
   metadataText: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#fff",
     textAlign: "center",
   },
   galleryContainer: {
